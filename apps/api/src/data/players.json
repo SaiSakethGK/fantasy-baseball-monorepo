@@ -1,0 +1,22 @@
+[
+  { "id": "p1", "name": "Ronald Acuña Jr.", "team": "ATL", "position": "OF", "stats": { "HR": 41, "RBI": 106, "R": 149, "SB": 73, "AVG": 0.337 } },
+  { "id": "p2", "name": "Mookie Betts", "team": "LAD", "position": "OF", "stats": { "HR": 39, "RBI": 107, "R": 126, "SB": 14, "AVG": 0.309 } },
+  { "id": "p3", "name": "Shohei Ohtani", "team": "LAD", "position": "UT", "stats": { "HR": 44, "RBI": 95, "R": 124, "SB": 26, "AVG": 0.304 } },
+  { "id": "p4", "name": "Aaron Judge", "team": "NYY", "position": "OF", "stats": { "HR": 62, "RBI": 131, "R": 133, "SB": 6, "AVG": 0.287 } },
+  { "id": "p5", "name": "Juan Soto", "team": "NYY", "position": "OF", "stats": { "HR": 35, "RBI": 110, "R": 118, "SB": 12, "AVG": 0.298 } },
+  { "id": "p6", "name": "Freddie Freeman", "team": "LAD", "position": "1B", "stats": { "HR": 29, "RBI": 102, "R": 131, "SB": 23, "AVG": 0.331 } },
+  { "id": "p7", "name": "Matt Olson", "team": "ATL", "position": "1B", "stats": { "HR": 54, "RBI": 139, "R": 127, "SB": 2, "AVG": 0.283 } },
+  { "id": "p8", "name": "Corey Seager", "team": "TEX", "position": "SS", "stats": { "HR": 33, "RBI": 96, "R": 88, "SB": 2, "AVG": 0.327 } },
+  { "id": "p9", "name": "Yordan Alvarez", "team": "HOU", "position": "OF", "stats": { "HR": 41, "RBI": 104, "R": 95, "SB": 3, "AVG": 0.293 } },
+  { "id": "p10", "name": "Adley Rutschman", "team": "BAL", "position": "C", "stats": { "HR": 20, "RBI": 80, "R": 84, "SB": 1, "AVG": 0.277 } },
+  { "id": "p11", "name": "Gerrit Cole", "team": "NYY", "position": "SP", "stats": { "W": 15, "SV": 0, "K": 222, "ERA": 2.63, "WHIP": 1.04 } },
+  { "id": "p12", "name": "Corbin Burnes", "team": "BAL", "position": "SP", "stats": { "W": 14, "SV": 0, "K": 200, "ERA": 3.05, "WHIP": 1.07 } },
+  { "id": "p13", "name": "Zack Wheeler", "team": "PHI", "position": "SP", "stats": { "W": 13, "SV": 0, "K": 212, "ERA": 3.30, "WHIP": 1.07 } },
+  { "id": "p14", "name": "Spencer Strider", "team": "ATL", "position": "SP", "stats": { "W": 20, "SV": 0, "K": 281, "ERA": 3.86, "WHIP": 1.09 } },
+  { "id": "p15", "name": "Emmanuel Clase", "team": "CLE", "position": "RP", "stats": { "W": 3, "SV": 44, "K": 74, "ERA": 1.36, "WHIP": 0.68 } },
+  { "id": "p16", "name": "Devin Williams", "team": "MIL", "position": "RP", "stats": { "W": 8, "SV": 36, "K": 87, "ERA": 1.53, "WHIP": 1.00 } },
+  { "id": "p17", "name": "Bobby Witt Jr.", "team": "KC", "position": "SS", "stats": { "HR": 30, "RBI": 96, "R": 97, "SB": 49, "AVG": 0.276 } },
+  { "id": "p18", "name": "Austin Riley", "team": "ATL", "position": "3B", "stats": { "HR": 33, "RBI": 97, "R": 117, "SB": 3, "AVG": 0.281 } },
+  { "id": "p19", "name": "Kyle Tucker", "team": "HOU", "position": "OF", "stats": { "HR": 34, "RBI": 112, "R": 97, "SB": 30, "AVG": 0.284 } },
+  { "id": "p20", "name": "Trea Turner", "team": "PHI", "position": "SS", "stats": { "HR": 26, "RBI": 76, "R": 102, "SB": 30, "AVG": 0.266 } }
+]
