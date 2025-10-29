@@ -1,4 +1,4 @@
-# Fantasy Baseball Platform – Second Round Exercise
+# Fantasy Baseball WebAPP – Round 2
 
 **Author:** Saketh
 
@@ -22,9 +22,9 @@ Implemented a working fantasy baseball draft demo with functionality, clean code
 ```
 fantasy-baseball-monorepo/
 ├─ apps/
-│  ├─ api/          # Fastify + TypeScript backend
-│  └─ web/          # React + Vite + TypeScript frontend
-├─ package.json      # workspace scripts
+│  ├─ api/            # Fastify + TypeScript backend
+│  └─ web/            # React + Vite + TypeScript frontend
+├─ package.json       # workspace scripts
 ├─ pnpm-workspace.yaml
 └─ README.md
 ```
@@ -68,8 +68,10 @@ fantasy-baseball-monorepo/
 ### Install
 
 ```bash
-git clone <repo-url>
+git clone https://github.com/SaiSakethGK/fantasy-baseball-monorepo.git
+
 cd fantasy-baseball-monorepo
+
 pnpm install --frozen-lockfile
 ```
 
@@ -114,19 +116,29 @@ curl -X POST http://localhost:3001/api/league/init \
       {"userId":"u2","name":"Alice"},
       {"userId":"u3","name":"Bob"},
       {"userId":"u4","name":"Chandra"}
-    ]
+    ],
+    "rounds":6,
+    "pickSeconds":15,
+    "autoPick":true,
+    "enforceLimits":true,
+    "positionLimits":{"C":1,"1B":1,"2B":1,"3B":1,"SS":1,"OF":2,"SP":1,"RP":1,"UT":1},
+    "allowRemoveAnytime":true
   }'
 ```
 
-> **Note**: You do **not** need to pass `rounds`, `pickSeconds`, `autoPick`, `enforceLimits`, `positionLimits`, or `allowRemoveAnytime` here.
-> These are configurable from the **Draft Settings** panel in the UI, which updates server state dynamically.
-
-**Make a user “human” (so my picks are manual for that user):**
-
+> **Note**: We do **not** need to pass `rounds`, `pickSeconds`, `autoPick`, `enforceLimits`, `positionLimits`, or `allowRemoveAnytime` here.
+> These are configurable from the **Draft Settings** panel in the UI, which updates server state dynamically. So we can just run the below command.
 ```bash
-curl -X POST http://localhost:3001/api/draft/human \
+curl -X POST http://localhost:3001/api/league/init \
   -H "Content-Type: application/json" \
-  -d '{"userId":"u1"}'
+  -d '{
+    "teams":[
+      {"userId":"u1","name":"Saketh"},
+      {"userId":"u2","name":"Alice"},
+      {"userId":"u3","name":"Bob"},
+      {"userId":"u4","name":"Chandra"}
+    ]
+  }'
 ```
 
 **Read current team, leaderboard, and projected top players:**
@@ -143,7 +155,7 @@ curl http://localhost:3001/api/scoring/top
 
 ### 5.1 Display a list of 20 players with basic stats
 
-* I provide a local dataset at `apps/api/src/data/players.json` (50 capped; UI shows subset of 20 for the requirement).
+* Created a local dataset at `apps/api/src/data/players.json`.
 * The backend exposes `GET /api/players`.
 * The web app lists players with position, team, ADP (derived index), and **projected points** (scoring function applied).
 
@@ -151,7 +163,7 @@ curl http://localhost:3001/api/scoring/top
 
 * **Add (draft)** via `POST /api/draft/pick { userId, playerId }`.
 * **Remove** via `POST /api/draft/remove { userId, playerId }`.
-  I expose a toggle (`allowRemoveAnytime`) in Draft Settings to permit removal only on your turn or at any time.
+  I expose a toggle (`allowRemoveAnytime`) in Draft Settings to permit removal only on our turn or at any time.
 
 ### 5.3 Notify users and enforce auto-draft on timer expiration
 
@@ -161,7 +173,7 @@ curl http://localhost:3001/api/scoring/top
   * If **autoPick** is enabled, I draft from the user’s **queue** first, otherwise pick the **best available** by projected points.
   * If autoPick is disabled, I mark the turn as **SKIPPED**.
 * The UI shows a live countdown and inline status messages (on the clock, auto-drafted, skipped).
-  I also ship notification sounds and (if allowed) a browser notification.
+  I also ship notification sound and (if allowed) a browser notification.
 
 ### 5.4 Prevent drafting the same player twice
 
@@ -170,8 +182,8 @@ curl http://localhost:3001/api/scoring/top
 
 ### 5.5 Backend in-memory or persistent
 
-* I implemented an **in-memory backend** to keep the demo deterministic, fast, and simple for review.
-* The state is explicitly structured to migrate to Redis/PostgreSQL (see §9).
+* Implemented an **in-memory backend** for the demo, also it's fast, and simple for review.
+* The state is structured to migrate to Redis/PostgreSQL.
 
 ### 5.6 Optional bonus implemented
 
@@ -185,7 +197,7 @@ curl http://localhost:3001/api/scoring/top
 
 ### 6.1 Scenario A — Scoring Function
 
-**Goal:** Calculate team total points and return top 5 players by points.
+Calculate team total points and return top 5 players by points.
 
 * I centralize scoring in **`apps/api/src/routes/scoring.ts`**:
 
@@ -202,12 +214,12 @@ curl http://localhost:3001/api/scoring/top
 
 ### 6.2 Scenario B — API Design
 
-**Goal:** Endpoint to retrieve a user’s drafted team and current points; handle missing stats or traded players.
+Endpoint to retrieve a user’s drafted team and current points; handle missing stats or traded players.
 
 * **Endpoint**: `GET /api/team/:userId` returns:
 
   * `teamName`, `totalPoints`, and `players` with `{id,name,team,position,stats,points,status}`.
-  * If a stored player id is not in the current dataset (e.g., traded, missing), I return a placeholder:
+  * If a stored player id is not in the current dataset (e.g., missing), I return a placeholder:
 
     ```
     { id: <pid>, name: "(Traded/Unknown Player)", position: "UT", team: "—", stats: {}, points: 0, status: "UNKNOWN" }
@@ -216,10 +228,9 @@ curl http://localhost:3001/api/scoring/top
 
 ### 6.3 Scenario C — Bug Fix
 
-**Bug:** Draft UI adds a player, but points do not update.
-**Diagnosis and fix:**
+**I faced the similar bug during the development**. Draft UI adds a player, but points didn't update.
 
-1. Verified that `/api/draft/pick` appended to the roster but did not recompute totals.
+1. To fix this, I vVerified that `/api/draft/pick` appended to the roster but did not recompute totals.
 2. Add **`recalcTeamPoints(team)`** immediately after state mutation.
 3. In the UI, after a pick/remove, I **refetch `/api/team/:userId`** and re-compute displayed totals.
 4. Confirmed leaderboard reflects changes due to periodic `/api/teams` polling.
@@ -255,7 +266,7 @@ I treat the draft as a **state machine** with time-bound transitions and idempot
 
 **Trade-offs**
 
-* For this exercise, I keep **in-memory state** and **polling** for simplicity and clarity.
+* For this exercise, I keep **in-memory state** and **polling**.
 * At production scale, I would shift to **event-driven** coordination with **WebSockets**, Redis, and durable storage.
 
 ---
@@ -269,7 +280,7 @@ I implemented:
 * **Draft timer**: countdown per active pick; UI highlights low-time threshold.
 * **Live leaderboard**: periodic polling updates to show team points.
 
-Planned (not implemented here, but designed for):
+Planned (not implemented here, but started implementing):
 
 * Waivers and transactions with server-side validation and scoring deltas.
 * WebSocket real-time updates instead of polling.
@@ -313,7 +324,6 @@ Planned (not implemented here, but designed for):
 * `POST /api/league/init` — Initialize a league
 
   * Body: `{ teams: Array<{ userId:string, name:string }>, ...(optional settings) }`
-* `POST /api/draft/human` — Assign the active human user: `{ userId?: string }` (unset if omitted)
 * `POST /api/draft/tick` — Advance the draft clock and potentially trigger auto-picks
 * `POST /api/draft/pick` — Make a pick: `{ userId, playerId }`
 * `POST /api/draft/remove` — Remove a pick: `{ userId, playerId }`
@@ -326,38 +336,12 @@ Planned (not implemented here, but designed for):
 
 ---
 
-## 11. Mapping to Requirements (Checklist)
+## 11. Working on
 
-| Requirement                                 | Status | Notes                                                              |
-| ------------------------------------------- | ------ | ------------------------------------------------------------------ |
-| List 20 players with stats                  | ✅      | `GET /api/players`; UI constrained to ≥20                          |
-| Add/remove players                          | ✅      | `/api/draft/pick`, `/api/draft/remove`                             |
-| Notify + enforce auto-draft on timeout      | ✅      | Server timer + queue-aware auto-pick; UI countdown + inline alerts |
-| Prevent drafting same player twice          | ✅      | Global `drafted` set; error handling                               |
-| Backend in-memory or persistent             | ✅      | In-memory now; §7/§9 detail production persistence                 |
-| Leaderboard with dynamic points             | ✅      | `/api/teams` + polling                                             |
-| Position limits                             | ✅      | Server-enforced + UI-aware                                         |
-| Scoring function + top 5                    | ✅      | `scoreStats`, `/api/scoring/top`                                   |
-| Team endpoint handling missing stats/trades | ✅      | Placeholder items with `status:"UNKNOWN"`                          |
-| Bug fix: points not updating                | ✅      | `recalcTeamPoints()` + UI refetch                                  |
-| System design for concurrency               | ✅      | §7                                                                 |
-| Optional features                           | ✅      | Suggested pick, queue, timer, auto-pick                            |
-
----
-
-## 12. Future Work
-
-* Replace polling with **WebSockets** for real-time updates.
+* Replacing polling with **WebSockets** for real-time updates.
 * Persist events and rosters in **PostgreSQL**; share state via **Redis**.
 * Authentication/authorization for multi-user leagues.
-* Historical stats and projections ingestion pipeline; data validation.
 * Unit/integration tests (Jest, Supertest) and E2E flows (Playwright).
 * Containerization (Docker) and CI/CD (GitHub Actions).
 
 ---
-
-## 13. Summary
-
-I delivered a deterministic, reproducible draft demo that satisfies the brief and demonstrates production-minded patterns: server-authoritative timers, clear state boundaries, typed API contracts, position limit enforcement, queue-aware auto-pick, robust scoring, and a migration path toward real-time scale.
-
-This codebase is intentionally small and readable while modeling the same mechanics used by larger fantasy platforms, making it straightforward to evolve to Redis/WebSocket/PostgreSQL when moving beyond a demo.
