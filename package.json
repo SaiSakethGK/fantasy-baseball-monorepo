@@ -1,0 +1,15 @@
+{
+  "name": "fantasy-baseball-monorepo",
+  "private": true,
+  "version": "1.0.0",
+  "workspaces": ["apps/*"],
+  "packageManager": "pnpm@9.10.0",
+  "engines": { "node": ">=20.11 <21" },
+  "devDependencies": {
+    "concurrently": "8.2.2"
+  },
+  "scripts": {
+    "install:ci": "pnpm install --frozen-lockfile",
+    "dev": "concurrently -n api,web -c blue,green \"pnpm --filter @fantasy-baseball/api dev\" \"pnpm --filter @fantasy-baseball/web dev\""
+  }
+}

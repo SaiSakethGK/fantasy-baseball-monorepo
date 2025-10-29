@@ -24,4 +24,13 @@ export interface DraftState {
   pickEndsAt?: number; // epoch ms
   pickSeconds: number;
   order: string[];
+  autoPick?: boolean;
+
+  totalRounds?: number;
+  lastEvent?: any;
+  draftedIds?: string[];
+
+  enforceLimits?: boolean;
+  positionLimits?: Record<string, number>;
+  allowRemoveAnytime?: boolean;
 }
