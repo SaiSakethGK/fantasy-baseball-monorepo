@@ -1,4 +1,4 @@
-# Fantasy Baseball WebAPP – Round 2
+# Fantasy Baseball WebAPP
 
 **Author:** Saketh
 
@@ -6,7 +6,7 @@
 
 ## 1. Objective
 
-Implemented a working fantasy baseball draft demo with functionality, clean code, and explicit domain logic. The deliverable includes:
+Implemented a working fantasy baseball draft demo.
 
 * A pnpm monorepo with a **Fastify (Node.js/TypeScript)** API (`apps/api`) and a **React/Vite/TypeScript** web app (`apps/web`).
 * A reproducible local run and minimal configuration.
